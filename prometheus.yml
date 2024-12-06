@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prometheus
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: prometheus
+    targetRevision: 25.30.1
+    helm:
+      releaseName: prometheus
+      parameters: 
+        - name: server.service.type
+          value: LoadBalancer
+        - name: server.ingress.enabled
+          value: "true"
+        - name: server.ingress.ingressClassName
+          value: nginx
+        - name: server.ingress.hosts[0]
+          value: "prometheus.localhost.com"
+  destination:
+    namespace: prometheus
+    server: https://kubernetes.default.svc
